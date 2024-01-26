@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
-#Bash script that displays messages when read some signals
-echo $$ > /var/run/holbertonscript.pid
-trap 'echo "I hate the kill command"; rm -rf /var/run/holbertonscript.pid; exit' SIGTERM
-trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -rf /var/run/holbertonscript.pid; exit' SIGQUIT
-while :
+#This script create a file containing its PDI
+#Do something indefinitely; and when receiving a SIGTERM, SIGINT and SIGQUIT
+
+no_file()
+{
+	sudo rm -f "/var/run/myscript.pid" ;
+}
+
+k_process()
+{
+	pkill -9 -f "10-process_and_pid_file" ;
+}
+
+
+
+echo "$$" > "/var/run/myscript.pid"
+trap "echo 'I hate the kill command'; no_file ; exit" SIGTERM
+trap "no_file; exit" SIGQUIT
+trap "echo 'Y U no love me?!'" SIGINT
+
+while (true)
 do
-    echo "To infinity and beyond"
-    sleep 2
+  echo "To infinity and beyond"
+  sleep 2
 done

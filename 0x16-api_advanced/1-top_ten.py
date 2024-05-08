@@ -1,22 +1,18 @@
 #!/usr/bin/python3
-"""
-Query titles of top ten posts of a given subreddit
-"""
+"""Function to query subscribers on a given Reddit subreddit."""
 import requests
+import urllib.parse
 
-
-def top_ten(subreddit):
-    """
-        Print top ten titles for a given subreddit or None
-        if invalid subreddit is given
-    """
-    headers = requests.utils.default_headers()
-    headers.update({'User-Agent': 'My User Agent 1.0'})
-
-    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(subreddit)
-    r = requests.get(url, headers=headers).json()
-    top_ten = r.get('data', {}).get('children', [])
-    if not top_ten:
-        print(None)
-    for title in top_ten:
-        print(title.get('data').get('title'))
+def number_of_subscribers(subreddit):
+    """Return the total number of subscribers on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/about.json".format(urllib.parse.quote(subreddit.lower()))
+    headers = {
+        "User-Agent": "MyBot/0.1"
+    }
+    response = requests.get(url, headers=headers, allow_redirects=False)
+    if response.status_code == 404:
+        return 0
+    if response.is_redirect:
+        return 0  # Handle redirects
+    results = response.json().get("data")
+    return results.get("subscribers")
